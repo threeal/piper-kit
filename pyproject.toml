@@ -8,7 +8,7 @@ authors = [
 ]
 description = "An example Python project for generating a Fibonacci sequence"
 readme = "README.md"
-license = "Unlicense"
+license = "MIT"
 keywords = ["example", "fibonacci"]
 classifiers = [
     "Development Status :: 1 - Planning",
