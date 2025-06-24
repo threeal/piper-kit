@@ -1,26 +1,26 @@
 [project]
-name = "bonacci"
-version = "0.0.0"
+name = "piper-cli"
+version = "0.1.0"
 dependencies = []
 requires-python = ">=3.13"
 authors = [
-    {name = "Leonardo Bonacci", email = "leonardo@bonacci.com"},
+    {name = "Alfi Maulana", email = "alfi.maulana.f@gmail.com"},
 ]
-description = "An example Python project for generating a Fibonacci sequence"
+description = "A command line interface for AgileX PiPER robotic arm"
 readme = "README.md"
 license = "MIT"
-keywords = ["example", "fibonacci"]
+keywords = ["cli", "robotic", "arm"]
 classifiers = [
     "Development Status :: 1 - Planning",
     "Programming Language :: Python :: 3 :: Only",
 ]
 
 [project.scripts]
-bonacci = "bonacci.__main__:main"
+piper = "piper_cli.__main__:main"
 
 [project.urls]
-repository = "https://github.com/leonardo/bonacci.git"
-issues = "https://github.com/leonardo/bonacci/issues"
+repository = "https://github.com/threeal/piper-cli.git"
+issues = "https://github.com/threeal/piper-cli/issues"
 
 [build-system]
 requires = ["hatchling"]
@@ -29,17 +29,8 @@ build-backend = "hatchling.build"
 [dependency-groups]
 dev = [
     "lefthook>=1.11.14",
-    "pytest>=8.4.0",
-    "pytest-cov>=6.2.1",
     "ruff>=0.11.13",
 ]
-
-[tool.coverage.report]
-fail_under = 100
-omit = ["__main__.py"]
-
-[tool.coverage.run]
-source = ["bonacci"]
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -47,4 +38,3 @@ ignore = ["COM812", "D"]
 
 [tool.ruff.lint.per-file-ignores]
 "__main__.py" = ["T201"]
-"tests/*" = ["S101"]
