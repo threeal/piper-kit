@@ -1,0 +1,14 @@
+pre-commit:
+  piped: true
+  jobs:
+    - name: install dependencies
+      run: uv sync
+
+    - name: fix formatting
+      run: uv run ruff format
+
+    - name: fix lint
+      run: uv run ruff check --fix
+
+    - name: check diff
+      run: git diff --exit-code uv.lock {staged_files}
