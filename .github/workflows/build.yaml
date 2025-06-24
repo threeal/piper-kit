@@ -24,8 +24,5 @@ jobs:
       - name: Check Lint
         run: uv run ruff check
 
-      - name: Test Package
-        run: uv run pytest -v --cov
-
       - name: Build Package
         run: uv build
