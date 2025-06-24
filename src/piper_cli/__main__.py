@@ -1,7 +1,10 @@
 import argparse
 import time
+import warnings
 
 from piper_sdk import C_PiperInterface_V2
+
+warnings.filterwarnings("ignore", category=SyntaxWarning, module=r"^piper_sdk(\.|$)")
 
 
 def main() -> None:
