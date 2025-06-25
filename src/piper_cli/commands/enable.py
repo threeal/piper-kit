@@ -1,9 +1,10 @@
+import argparse
 import time
 
 from piper_sdk import C_PiperInterface_V2
 
 
-def command_enable() -> None:
+def command_enable(_: argparse.Namespace) -> None:
     piper = C_PiperInterface_V2()
     piper.ConnectPort()
 
