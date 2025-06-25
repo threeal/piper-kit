@@ -24,8 +24,8 @@ def command_enable(args: argparse.Namespace) -> None:
             ]
         )
 
-    piper.MotionCtrl_2(0x01, 0x01, 100, 0x00)
-    time.sleep(0.5)
+    piper.MotionCtrl_2(0x01, 0x01, 20, 0x00)
+    time.sleep(0.1)
 
     piper.JointCtrl(0, 0, 0, 0, 0, 0)
 

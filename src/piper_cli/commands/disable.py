@@ -8,8 +8,8 @@ def command_disable(args: argparse.Namespace) -> None:
     piper = C_PiperInterface_V2(args.can_interface)
     piper.ConnectPort()
 
-    piper.MotionCtrl_2(0x01, 0x01, 100, 0x00)
-    time.sleep(0.5)
+    piper.MotionCtrl_2(0x01, 0x01, 20, 0x00)
+    time.sleep(0.1)
 
     positions = [0, 0, 0, 0, 17000, 0]
     piper.JointCtrl(*positions)
