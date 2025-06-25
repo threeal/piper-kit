@@ -4,8 +4,8 @@ import time
 from piper_sdk import C_PiperInterface_V2
 
 
-def command_enable(_: argparse.Namespace) -> None:
-    piper = C_PiperInterface_V2()
+def command_enable(args: argparse.Namespace) -> None:
+    piper = C_PiperInterface_V2(args.can_interface)
     piper.ConnectPort()
     piper.EnableArm(7)
 

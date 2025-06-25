@@ -13,6 +13,9 @@ def main() -> None:
 
     enable_parser = subparsers.add_parser("enable", help="enable the PiPER arm")
     enable_parser.set_defaults(func=command_enable)
+    enable_parser.add_argument(
+        "can_interface", nargs="?", default="can0", help="CAN interface to use"
+    )
 
     args = parser.parse_args()
     args.func(args)
