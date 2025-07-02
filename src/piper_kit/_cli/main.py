@@ -1,6 +1,7 @@
 import argparse
 
-from .commands import command_disable, command_enable
+from .disable import command_disable
+from .enable import command_enable
 
 
 def main() -> None:
