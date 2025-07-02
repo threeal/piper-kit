@@ -15,7 +15,7 @@ def command_disable(args: argparse.Namespace) -> None:
         time.sleep(0.1)
 
         positions = [0, 0, 0, 0, 17000, 0]
-        piper.JointCtrl(*positions)
+        p.set_joint_control(*positions)
 
         done = False
         tolerance = 1000

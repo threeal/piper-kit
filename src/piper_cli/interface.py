@@ -5,6 +5,9 @@ import can
 
 from .messages import (
     EnableJointMessage,
+    JointControl12Message,
+    JointControl34Message,
+    JointControl56Message,
     MotionControlBMessage,
     MotorInfoBMessage,
     ReceiveMessage,
@@ -35,6 +38,28 @@ class PiperInterface:
         control_mode: MotionControlBMessage.ControlMode = "can",
     ) -> None:
         self.bus.send(MotionControlBMessage(control_mode, move_mode, move_speed_rate))
+
+    def set_joint_control_12(self, joint_1: int, joint_2: int) -> None:
+        self.bus.send(JointControl12Message(joint_1, joint_2))
+
+    def set_joint_control_34(self, joint_3: int, joint_4: int) -> None:
+        self.bus.send(JointControl34Message(joint_3, joint_4))
+
+    def set_joint_control_56(self, joint_5: int, joint_6: int) -> None:
+        self.bus.send(JointControl56Message(joint_5, joint_6))
+
+    def set_joint_control(  # noqa: PLR0913
+        self,
+        joint_1: int,
+        joint_2: int,
+        joint_3: int,
+        joint_4: int,
+        joint_5: int,
+        joint_6: int,
+    ) -> None:
+        self.set_joint_control_12(joint_1, joint_2)
+        self.set_joint_control_34(joint_3, joint_4)
+        self.set_joint_control_56(joint_5, joint_6)
 
     def enable_joint(
         self, joint_id: EnableJointMessage.JointId, *, enable: bool = True
