@@ -8,6 +8,9 @@ from .messages import (
     JointControl12Message,
     JointControl34Message,
     JointControl56Message,
+    JointFeedback12Message,
+    JointFeedback34Message,
+    JointFeedback56Message,
     MotionControlBMessage,
     MotorInfoBMessage,
     ReceiveMessage,
@@ -78,6 +81,15 @@ class PiperInterface:
     def read_message(self) -> ReceiveMessage:
         msg = self.bus.recv()
         match msg.arbitration_id:
+            case JointFeedback12Message.ID:
+                return JointFeedback12Message(msg)
+
+            case JointFeedback34Message.ID:
+                return JointFeedback34Message(msg)
+
+            case JointFeedback56Message.ID:
+                return JointFeedback56Message(msg)
+
             case _ if (
                 MotorInfoBMessage.ID1 <= msg.arbitration_id <= MotorInfoBMessage.ID6
             ):
@@ -85,6 +97,24 @@ class PiperInterface:
 
             case _:
                 return UnknownMessage(msg)
+
+    def read_all_joint_feedbacks(self) -> list[int]:
+        feedbacks = [None] * 6
+        while any(f is None for f in feedbacks):
+            match self.read_message():
+                case JointFeedback12Message() as msg:
+                    feedbacks[0] = msg.joint_1
+                    feedbacks[1] = msg.joint_2
+
+                case JointFeedback34Message() as msg:
+                    feedbacks[2] = msg.joint_3
+                    feedbacks[3] = msg.joint_4
+
+                case JointFeedback56Message() as msg:
+                    feedbacks[4] = msg.joint_5
+                    feedbacks[5] = msg.joint_6
+
+        return feedbacks
 
     def read_all_motor_info_bs(self) -> list[MotorInfoBMessage]:
         infos = [None] * 6
