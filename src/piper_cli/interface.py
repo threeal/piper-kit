@@ -5,6 +5,7 @@ import can
 
 from .messages import (
     EnableJointMessage,
+    MotionControlBMessage,
     MotorInfoBMessage,
     ReceiveMessage,
     UnknownMessage,
@@ -25,6 +26,15 @@ class PiperInterface:
         _exc_tb: TracebackType | None,
     ) -> Self:
         self.bus.shutdown()
+
+    def set_motion_control_b(
+        self,
+        move_mode: MotionControlBMessage.MoveMode,
+        move_speed_rate: int,
+        *,
+        control_mode: MotionControlBMessage.ControlMode = "can",
+    ) -> None:
+        self.bus.send(MotionControlBMessage(control_mode, move_mode, move_speed_rate))
 
     def enable_joint(
         self, joint_id: EnableJointMessage.JointId, *, enable: bool = True

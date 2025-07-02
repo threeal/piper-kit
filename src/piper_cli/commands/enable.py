@@ -18,7 +18,7 @@ def command_enable(args: argparse.Namespace) -> None:
             if all(i.driver_status.driver_enabled for i in infos):
                 break
 
-        piper.MotionCtrl_2(0x01, 0x01, 20, 0x00)
+        p.set_motion_control_b("joint", 20)
         time.sleep(0.1)
 
         piper.JointCtrl(0, 0, 0, 0, 0, 0)
