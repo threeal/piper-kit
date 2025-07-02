@@ -1,3 +1,5 @@
+"""CLI command to enable the PiPER robotic arm."""
+
 import argparse
 import time
 
@@ -5,6 +7,12 @@ from piper_kit import PiperInterface
 
 
 def command_enable(args: argparse.Namespace) -> None:
+    """Enable PiPER arm and move to home position.
+
+    Args:
+        args: Command line arguments containing CAN interface
+
+    """
     with PiperInterface(args.can_interface) as piper:
         piper.enable_all_joints()
 

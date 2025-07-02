@@ -1,3 +1,5 @@
+"""Transmit message classes for sending commands to the PiPER arm."""
+
 from .enable_joint import EnableJointMessage
 from .joint_control import (
     JointControl12Message,

@@ -1,3 +1,5 @@
+"""CLI command to disable the PiPER robotic arm."""
+
 import argparse
 import time
 
@@ -7,6 +9,12 @@ JOINT_TOLERANCE = 1000
 
 
 def command_disable(args: argparse.Namespace) -> None:
+    """Move PiPER arm to safe position and disable all joints.
+
+    Args:
+        args: Command line arguments containing CAN interface
+
+    """
     with PiperInterface(args.can_interface) as piper:
         piper.set_motion_control_b("joint", 20)
         time.sleep(0.1)
