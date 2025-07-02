@@ -42,6 +42,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "piper-sdk" },
+    { name = "python-can" },
 ]
 
 [package.dev-dependencies]
@@ -51,7 +52,10 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "piper-sdk", specifier = ">=0.2.19" }]
+requires-dist = [
+    { name = "piper-sdk", specifier = ">=0.2.19" },
+    { name = "python-can", specifier = ">=4.5.0" },
+]
 
 [package.metadata.requires-dev]
 dev = [
