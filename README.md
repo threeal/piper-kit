@@ -1,6 +1,8 @@
 # Piper Kit
 
-SDK and CLI tools for [AgileX PiPER](https://global.agilex.ai/products/piper) robotic arm.
+A Python SDK and CLI toolkit for controlling the [AgileX PiPER](https://global.agilex.ai/products/piper) 6-DOF robotic arm via CAN bus communication.
+
+This package provides direct low-level control through socketcan interface, enabling real-time joint positioning, motion control, and safety monitoring. Features both command-line tools for quick operations and a comprehensive Python API for programmatic control with automatic resource management.
 
 ## Installation
 
