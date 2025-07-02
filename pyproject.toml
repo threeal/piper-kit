@@ -1,5 +1,5 @@
 [project]
-name = "piper-cli"
+name = "piper-kit"
 version = "0.1.0"
 dependencies = [
     "python-can>=4.5.0",
@@ -8,21 +8,21 @@ requires-python = ">=3.13"
 authors = [
     {name = "Alfi Maulana", email = "alfi.maulana.f@gmail.com"},
 ]
-description = "A command line interface for AgileX PiPER robotic arm"
+description = "SDK and CLI tools for AgileX PiPER robotic arm"
 readme = "README.md"
 license = "MIT"
-keywords = ["cli", "robotic", "arm"]
+keywords = ["sdk", "cli", "robotic", "arm"]
 classifiers = [
     "Development Status :: 1 - Planning",
     "Programming Language :: Python :: 3 :: Only",
 ]
 
 [project.scripts]
-piper = "piper_cli.__main__:main"
+piper = "piper_kit.__main__:main"
 
 [project.urls]
-repository = "https://github.com/threeal/piper-cli.git"
-issues = "https://github.com/threeal/piper-cli/issues"
+repository = "https://github.com/threeal/piper-kit.git"
+issues = "https://github.com/threeal/piper-kit/issues"
 
 [build-system]
 requires = ["hatchling"]

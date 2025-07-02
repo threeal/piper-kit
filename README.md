@@ -1,6 +1,6 @@
-# Piper CLI
+# Piper Kit
 
-A command line interface for [AgileX PiPER](https://global.agilex.ai/products/piper) robotic arm.
+SDK and CLI tools for [AgileX PiPER](https://global.agilex.ai/products/piper) robotic arm.
 
 ## License
 

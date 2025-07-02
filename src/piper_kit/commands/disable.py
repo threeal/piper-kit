@@ -1,7 +1,7 @@
 import argparse
 import time
 
-from piper_cli import PiperInterface
+from piper_kit import PiperInterface
 
 JOINT_TOLERANCE = 1000
 
