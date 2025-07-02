@@ -1,33 +1,22 @@
 import argparse
 import time
 
-from piper_sdk import C_PiperInterface_V2
+from piper_cli import PiperInterface
 
 
 def command_enable(args: argparse.Namespace) -> None:
-    piper = C_PiperInterface_V2(args.can_interface)
-    piper.ConnectPort()
-    piper.EnableArm(7)
+    with PiperInterface(args.can_interface) as piper:
+        piper.enable_all_joints()
 
-    enabled = False
-    while not enabled:
+        while True:
+            infos = piper.read_all_motor_info_bs()
+            if all(i.driver_status.driver_enabled for i in infos):
+                break
+
+        piper.set_motion_control_b("joint", 20)
         time.sleep(0.1)
-        info = piper.GetArmLowSpdInfoMsgs()
-        enabled = all(
-            [
-                info.motor_1.foc_status.driver_enable_status,
-                info.motor_2.foc_status.driver_enable_status,
-                info.motor_3.foc_status.driver_enable_status,
-                info.motor_4.foc_status.driver_enable_status,
-                info.motor_5.foc_status.driver_enable_status,
-                info.motor_6.foc_status.driver_enable_status,
-            ]
-        )
 
-    piper.MotionCtrl_2(0x01, 0x01, 20, 0x00)
-    time.sleep(0.1)
-
-    piper.JointCtrl(0, 0, 0, 0, 0, 0)
+        piper.set_joint_control(0, 0, 0, 0, 0, 0)
 
 
 __all__ = ["command_enable"]

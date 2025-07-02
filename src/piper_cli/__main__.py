@@ -1,9 +1,6 @@
 import argparse
-import warnings
 
 from .commands import command_disable, command_enable
-
-warnings.filterwarnings("ignore", category=SyntaxWarning, module=r"^piper_sdk(\.|$)")
 
 
 def main() -> None:

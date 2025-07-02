@@ -41,7 +41,7 @@ name = "piper-cli"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "piper-sdk" },
+    { name = "python-can" },
 ]
 
 [package.dev-dependencies]
@@ -51,24 +51,12 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "piper-sdk", specifier = ">=0.2.19" }]
+requires-dist = [{ name = "python-can", specifier = ">=4.5.0" }]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "lefthook", specifier = ">=1.11.14" },
     { name = "ruff", specifier = ">=0.11.13" },
-]
-
-[[package]]
-name = "piper-sdk"
-version = "0.3.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "python-can" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/d0/22/1e8e0816b22bb75762fd106dca657c35cb2cc0c407e08352251f3970ca58/piper_sdk-0.3.0.tar.gz", hash = "sha256:a40ef0007fa3bbebd8434deffca5b0161981a30fb467568424096ea1732c3e01", size = 566445, upload-time = "2025-06-25T10:40:56.929Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/54/c1/7e4f8f998d64eba6e4d1dbaf46252c1cf853a5f8c0f1111f3f5d9a14f82b/piper_sdk-0.3.0-py3-none-any.whl", hash = "sha256:5686ce1be65b06f492d7a962244d8fb8b2a35d24637bdb7ac597ae66ae6cd92e", size = 264383, upload-time = "2025-06-25T10:40:55.405Z" },
 ]
 
 [[package]]
