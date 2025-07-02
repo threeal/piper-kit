@@ -1,3 +1,5 @@
+"""Receive message classes for reading feedback from the PiPER arm."""
+
 from .joint_feedback import (
     JointFeedback12Message,
     JointFeedback34Message,

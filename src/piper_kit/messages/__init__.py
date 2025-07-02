@@ -1,3 +1,9 @@
+"""CAN message definitions for PiPER robotic arm communication.
+
+This module contains message classes for communicating with the PiPER arm via CAN bus.
+Messages are organized into transmit (commands sent to arm) and receive (feedback).
+"""
+
 from .receive import (
     JointFeedback12Message,
     JointFeedback34Message,
