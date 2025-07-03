@@ -11,7 +11,7 @@ authors = [
 description = "SDK and CLI tools for AgileX PiPER robotic arm"
 readme = "README.md"
 license = "MIT"
-keywords = ["sdk", "cli", "robotic", "arm"]
+keywords = ["robotics", "can-bus", "agilex", "piper", "robotic-arm", "automation", "sdk", "cli"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
