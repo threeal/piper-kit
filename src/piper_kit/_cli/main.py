@@ -1,5 +1,3 @@
-"""Main CLI entry point for PiPER robotic arm control commands."""
-
 import argparse
 
 from .disable import command_disable
@@ -7,7 +5,6 @@ from .enable import command_enable
 
 
 def main() -> None:
-    """Set up argument parsing and execute commands."""
     parser = argparse.ArgumentParser(prog="piper")
     parser.add_argument("-v", "--version", action="version", version="0.1.0")
     subparsers = parser.add_subparsers(required=True)
