@@ -16,6 +16,7 @@ class Screen:
         self.exit = False
         self.feedbacks = [0, 0, 0, 0, 0, 0]
         self.positions = [0, 0, 0, 0, 0, 0]
+        self.gripper_position = 0
 
     def __enter__(self) -> Self:
         self._stdscr = curses.initscr()
@@ -38,15 +39,17 @@ class Screen:
         self._stdscr.addstr(8, 2, "Wrist1 (J4):")
         self._stdscr.addstr(9, 2, "Wrist2 (J5):")
         self._stdscr.addstr(10, 2, "Wrist3 (J6):")
+        self._stdscr.addstr(11, 2, "Gripper:")
 
-        self._stdscr.addstr(12, 2, "Keyboard Controls:", curses.A_BOLD)
-        self._stdscr.addstr(13, 4, "Base (J1):     A/D - Rotate left/right")
-        self._stdscr.addstr(14, 4, "Shoulder (J2): W/S - Move up/down")
-        self._stdscr.addstr(15, 4, "Elbow (J3):    I/K - Move up/down")
-        self._stdscr.addstr(16, 4, "Wrist1 (J4):   J/L - Rotate left/right")
-        self._stdscr.addstr(17, 4, "Wrist2 (J5):   Q/E - Rotate left/right")
-        self._stdscr.addstr(18, 4, "Wrist3 (J6):   U/O - Rotate left/right")
-        self._stdscr.addstr(20, 4, "ESC - Exit teleoperation", curses.A_BOLD)
+        self._stdscr.addstr(13, 2, "Keyboard Controls:", curses.A_BOLD)
+        self._stdscr.addstr(14, 4, "Base (J1):     A/D - Rotate left/right")
+        self._stdscr.addstr(15, 4, "Shoulder (J2): W/S - Move up/down")
+        self._stdscr.addstr(16, 4, "Elbow (J3):    I/K - Move up/down")
+        self._stdscr.addstr(17, 4, "Wrist1 (J4):   J/L - Rotate left/right")
+        self._stdscr.addstr(18, 4, "Wrist2 (J5):   Q/E - Rotate left/right")
+        self._stdscr.addstr(19, 4, "Wrist3 (J6):   U/O - Rotate left/right")
+        self._stdscr.addstr(20, 4, "Gripper:       F/H - Open/close")
+        self._stdscr.addstr(22, 4, "ESC - Exit teleoperation", curses.A_BOLD)
 
         self._stdscr.refresh()
 
@@ -89,12 +92,17 @@ class Screen:
                 self.positions[5] -= 5000
             elif key == ord("o"):
                 self.positions[5] += 5000
+            elif key == ord("f"):
+                self.gripper_position += 5000
+            elif key == ord("h"):
+                self.gripper_position -= 5000
 
             for i in range(6):
                 diff = self.positions[i] - self.feedbacks[i]
                 info = f"{self.positions[i]:<12} {self.feedbacks[i]:<12} {diff:<10}"
                 self._stdscr.addstr(5 + i, 18, info)
 
+            self._stdscr.addstr(11, 18, f"{self.gripper_position:<12}")
             self._stdscr.refresh()
 
             time.sleep(1 / 30)
@@ -107,6 +115,7 @@ def command_teleop_joint(args: argparse.Namespace) -> None:
 
             piper.set_motion_control_b("joint", 20)
             piper.set_joint_control(*screen.positions)
+            piper.set_gripper_control(screen.gripper_position)
 
 
 __all__ = ["command_teleop_joint"]
