@@ -17,6 +17,7 @@ def command_enable(args: argparse.Namespace) -> None:
         time.sleep(0.1)
 
         piper.set_joint_control(0, 0, 0, 0, 0, 0)
+        piper.set_gripper_control(45000, 1000)
 
 
 __all__ = ["command_enable"]
