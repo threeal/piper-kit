@@ -7,6 +7,7 @@ import can
 
 from .messages import (
     EnableJointMessage,
+    GripperControlMessage,
     JointControl12Message,
     JointControl34Message,
     JointControl56Message,
@@ -118,6 +119,48 @@ class PiperInterface:
         self.set_joint_control_12(joint_1, joint_2)
         self.set_joint_control_34(joint_3, joint_4)
         self.set_joint_control_56(joint_5, joint_6)
+
+    def set_gripper_control(
+        self,
+        position: int,
+        effort: int,
+        *,
+        enable: bool = True,
+        clear_error: bool = False,
+        set_zero: bool = False,
+    ) -> None:
+        """Control gripper position and effort.
+
+        Args:
+            position: Target gripper position
+            effort: Effort/force to apply
+            enable: Enable gripper control
+            clear_error: Clear any error state
+            set_zero: Set current position as zero reference
+
+        """
+        self.bus.send(
+            GripperControlMessage(
+                position,
+                effort,
+                enable=enable,
+                clear_error=clear_error,
+                set_zero=set_zero,
+            )
+        )
+
+    def enable_gripper(self, *, enable: bool = True) -> None:
+        """Enable or disable gripper control.
+
+        Args:
+            enable: True to enable, False to disable
+
+        """
+        self.set_gripper_control(0, 0, enable=enable)
+
+    def disable_gripper(self) -> None:
+        """Disable gripper control."""
+        self.enable_gripper(enable=False)
 
     def enable_joint(
         self, joint_id: EnableJointMessage.JointId, *, enable: bool = True

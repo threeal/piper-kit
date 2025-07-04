@@ -14,6 +14,7 @@ from .receive import (
 )
 from .transmit import (
     EnableJointMessage,
+    GripperControlMessage,
     JointControl12Message,
     JointControl34Message,
     JointControl56Message,
@@ -23,6 +24,7 @@ from .transmit import (
 
 __all__ = [
     "EnableJointMessage",
+    "GripperControlMessage",
     "JointControl12Message",
     "JointControl34Message",
     "JointControl56Message",
