@@ -5,6 +5,12 @@ import time
 from typing import Self
 
 from piper_kit import PiperInterface
+from piper_kit.messages import (
+    GripperFeedbackMessage,
+    JointFeedback12Message,
+    JointFeedback34Message,
+    JointFeedback56Message,
+)
 
 
 class Screen:
@@ -14,9 +20,12 @@ class Screen:
         super().__init__(*args, **kwargs)
 
         self.exit = False
+
         self.feedbacks = [0, 0, 0, 0, 0, 0]
         self.positions = [0, 0, 0, 0, 0, 0]
-        self.gripper_position = 0
+
+        self.gripper_feedback = 0
+        self.gripper_position = 45000
 
     def __enter__(self) -> Self:
         self._stdscr = curses.initscr()
@@ -102,7 +111,10 @@ class Screen:
                 info = f"{self.positions[i]:<12} {self.feedbacks[i]:<12} {diff:<10}"
                 self._stdscr.addstr(5 + i, 18, info)
 
-            self._stdscr.addstr(11, 18, f"{self.gripper_position:<12}")
+            diff = self.gripper_position - self.gripper_feedback
+            info = f"{self.gripper_position:<12} {self.gripper_feedback:<12} {diff:<10}"
+            self._stdscr.addstr(11, 18, info)
+
             self._stdscr.refresh()
 
             time.sleep(1 / 30)
@@ -111,11 +123,29 @@ class Screen:
 def command_teleop_joint(args: argparse.Namespace) -> None:
     with PiperInterface(args.can_interface) as piper, Screen() as screen:
         while not screen.exit:
-            screen.feedbacks = piper.read_all_joint_feedbacks()
+            match piper.read_message():
+                case JointFeedback12Message() as msg:
+                    screen.feedbacks[0] = msg.joint_1
+                    screen.feedbacks[1] = msg.joint_2
 
-            piper.set_motion_control_b("joint", 20)
-            piper.set_joint_control(*screen.positions)
-            piper.set_gripper_control(screen.gripper_position)
+                    piper.set_motion_control_b("joint", 20)
+                    piper.set_joint_control_12(*screen.positions[0:2])
+
+                case JointFeedback34Message() as msg:
+                    screen.feedbacks[2] = msg.joint_3
+                    screen.feedbacks[3] = msg.joint_4
+
+                    piper.set_joint_control_34(*screen.positions[2:4])
+
+                case JointFeedback56Message() as msg:
+                    screen.feedbacks[4] = msg.joint_5
+                    screen.feedbacks[5] = msg.joint_6
+
+                    piper.set_joint_control_56(*screen.positions[4:6])
+
+                case GripperFeedbackMessage() as msg:
+                    screen.gripper_feedback = msg.position
+                    piper.set_gripper_control(screen.gripper_position, 1000)
 
 
 __all__ = ["command_teleop_joint"]
