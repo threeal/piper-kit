@@ -5,6 +5,7 @@ Messages are organized into transmit (commands sent to arm) and receive (feedbac
 """
 
 from .receive import (
+    GripperFeedbackMessage,
     JointFeedback12Message,
     JointFeedback34Message,
     JointFeedback56Message,
@@ -25,6 +26,7 @@ from .transmit import (
 __all__ = [
     "EnableJointMessage",
     "GripperControlMessage",
+    "GripperFeedbackMessage",
     "JointControl12Message",
     "JointControl34Message",
     "JointControl56Message",

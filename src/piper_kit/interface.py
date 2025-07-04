@@ -8,6 +8,7 @@ import can
 from .messages import (
     EnableJointMessage,
     GripperControlMessage,
+    GripperFeedbackMessage,
     JointControl12Message,
     JointControl34Message,
     JointControl56Message,
@@ -200,7 +201,8 @@ class PiperInterface:
         """Read a single message from the CAN bus.
 
         Returns:
-            Parsed message object (JointFeedback, MotorInfo, or Unknown)
+            Parsed message object (JointFeedback, GripperFeedback, MotorInfo, or
+            Unknown)
 
         """
         msg = self.bus.recv()
@@ -213,6 +215,9 @@ class PiperInterface:
 
             case JointFeedback56Message.ID:
                 return JointFeedback56Message(msg)
+
+            case GripperFeedbackMessage.ID:
+                return GripperFeedbackMessage(msg)
 
             case _ if (
                 MotorInfoBMessage.ID1 <= msg.arbitration_id <= MotorInfoBMessage.ID6
