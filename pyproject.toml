@@ -42,6 +42,9 @@ dev = [
     "ruff>=0.11.13",
 ]
 
+[tool.hatch.build.targets.sdist]
+include = ["src"]
+
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = ["COM812", "D203", "D213"]
