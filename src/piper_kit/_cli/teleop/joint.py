@@ -50,7 +50,7 @@ class TeleopJointApp(App):
 
     def on_refresh(self, key: int) -> None:  # noqa: C901, PLR0912
         if key == self.KEY_ESC:
-            self.exit = True
+            self.exit()
         elif key == ord("w"):
             self.target_pos[1] += 5000
         elif key == ord("s"):
@@ -90,7 +90,7 @@ class TeleopJointApp(App):
 
 def command_teleop_joint(args: argparse.Namespace) -> None:
     with PiperInterface(args.can_interface) as piper, TeleopJointApp() as app:
-        while not app.exit:
+        while not app.is_exited():
             match piper.read_message():
                 case JointFeedback12Message() as msg:
                     app.current_pos[0] = msg.joint_1

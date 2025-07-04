@@ -1,37 +1,31 @@
 import curses
-import threading
 import time
 from typing import Self
 
+from .thread import Thread
 
-class App:
+
+class App(Thread):
     KEY_ESC = 27
-
-    def __init__(self) -> None:
-        self.exit = False
 
     def __enter__(self) -> Self:
         self.stdscr = curses.initscr()
         self.stdscr.nodelay(True)  # noqa: FBT003
-
         curses.curs_set(0)
         curses.noecho()
 
         self.on_init()
         self.stdscr.refresh()
 
-        self._thread = threading.Thread(target=self.thread_worker)
-        self._thread.start()
-
+        super().__enter__()
         return self
 
     def __exit__(self, *args: object) -> None:
-        self.exit = True
-        self._thread.join()
+        super().__exit__(*args)
         curses.endwin()
 
-    def thread_worker(self) -> None:
-        while not self.exit:
+    def worker(self) -> None:
+        while not self.is_exited():
             key = self.stdscr.getch()
             self.on_refresh(key)
             self.stdscr.refresh()
