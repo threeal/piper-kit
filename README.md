@@ -1,4 +1,4 @@
-# Piper Kit
+# PiPER Kit
 
 A Python SDK and CLI toolkit for controlling the [AgileX PiPER](https://global.agilex.ai/products/piper) 6-DOF robotic arm via CAN bus communication.
 
