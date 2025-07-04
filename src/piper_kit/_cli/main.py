@@ -2,7 +2,7 @@ import argparse
 
 from .disable import command_disable
 from .enable import command_enable
-from .teleop import command_teleop_joint
+from .teleop import command_teleop_follow, command_teleop_joint
 
 
 def main() -> None:
@@ -24,6 +24,20 @@ def main() -> None:
 
     teleop_parser = subparsers.add_parser("teleop", help="teleop the PiPER arm")
     teleop_subparsers = teleop_parser.add_subparsers(required=True)
+
+    teleop_follow_parser = teleop_subparsers.add_parser(
+        "follow", help="teleop the follower PiPER arm using the leader PiPER arm"
+    )
+    teleop_follow_parser.set_defaults(func=command_teleop_follow)
+    teleop_follow_parser.add_argument(
+        "leader_can", help="CAN interface of the leader to use"
+    )
+    teleop_follow_parser.add_argument(
+        "follower_can",
+        nargs="?",
+        default="can0",
+        help="CAN interface of the follower to use",
+    )
 
     teleop_joint_parser = teleop_subparsers.add_parser(
         "joint", help="teleop the joint positions of PiPER arm"

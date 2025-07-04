@@ -1,10 +1,9 @@
 import argparse
 import curses
-import threading
-import time
 from typing import Self
 
 from piper_kit import PiperInterface
+from piper_kit._cli.utils import App
 from piper_kit.messages import (
     GripperFeedbackMessage,
     JointFeedback12Message,
@@ -13,139 +12,108 @@ from piper_kit.messages import (
 )
 
 
-class Screen:
-    KEY_ESC = 27
+class TeleopJointApp(App):
+    def __init__(self) -> None:
+        super().__init__()
 
-    def __init__(self, *args: any, **kwargs: any) -> None:
-        super().__init__(*args, **kwargs)
+        self.current_pos = [0, 0, 0, 0, 0, 0, 0]
+        self.target_pos = [0, 0, 0, 0, 0, 0, 45000]
 
-        self.exit = False
-
-        self.feedbacks = [0, 0, 0, 0, 0, 0]
-        self.positions = [0, 0, 0, 0, 0, 0]
-
-        self.gripper_feedback = 0
-        self.gripper_position = 45000
-
-    def __enter__(self) -> Self:
-        self._stdscr = curses.initscr()
-        self._stdscr.nodelay(True)  # noqa: FBT003
-
-        curses.curs_set(0)
-        curses.noecho()
-
+    def on_init(self) -> Self:
         title = "PiPER Joint Teleoperation"
-        self._stdscr.addstr(0, (55 - len(title)) // 2, title, curses.A_BOLD)
+        self.stdscr.addstr(0, (55 - len(title)) // 2, title, curses.A_BOLD)
 
-        self._stdscr.addstr(3, 2, "Joint Information:", curses.A_BOLD)
+        self.stdscr.addstr(3, 2, "Joint Information:", curses.A_BOLD)
 
         headers = f"{'Joint':<15} {'Target':<12} {'Current':<12} {'Diff':<10}"
-        self._stdscr.addstr(4, 2, headers, curses.A_UNDERLINE)
+        self.stdscr.addstr(4, 2, headers, curses.A_UNDERLINE)
 
-        self._stdscr.addstr(5, 2, "Base (J1):")
-        self._stdscr.addstr(6, 2, "Shoulder (J2):")
-        self._stdscr.addstr(7, 2, "Elbow (J3):")
-        self._stdscr.addstr(8, 2, "Wrist1 (J4):")
-        self._stdscr.addstr(9, 2, "Wrist2 (J5):")
-        self._stdscr.addstr(10, 2, "Wrist3 (J6):")
-        self._stdscr.addstr(11, 2, "Gripper:")
+        self.stdscr.addstr(5, 2, "Base (J1):")
+        self.stdscr.addstr(6, 2, "Shoulder (J2):")
+        self.stdscr.addstr(7, 2, "Elbow (J3):")
+        self.stdscr.addstr(8, 2, "Wrist1 (J4):")
+        self.stdscr.addstr(9, 2, "Wrist2 (J5):")
+        self.stdscr.addstr(10, 2, "Wrist3 (J6):")
+        self.stdscr.addstr(11, 2, "Gripper:")
 
-        self._stdscr.addstr(13, 2, "Keyboard Controls:", curses.A_BOLD)
-        self._stdscr.addstr(14, 4, "Base (J1):     A/D - Rotate left/right")
-        self._stdscr.addstr(15, 4, "Shoulder (J2): W/S - Move up/down")
-        self._stdscr.addstr(16, 4, "Elbow (J3):    I/K - Move up/down")
-        self._stdscr.addstr(17, 4, "Wrist1 (J4):   J/L - Rotate left/right")
-        self._stdscr.addstr(18, 4, "Wrist2 (J5):   Q/E - Rotate left/right")
-        self._stdscr.addstr(19, 4, "Wrist3 (J6):   U/O - Rotate left/right")
-        self._stdscr.addstr(20, 4, "Gripper:       F/H - Open/close")
-        self._stdscr.addstr(22, 4, "ESC - Exit teleoperation", curses.A_BOLD)
-
-        self._stdscr.refresh()
-
-        self._thread = threading.Thread(target=self.thread_worker)
-        self._thread.start()
+        self.stdscr.addstr(13, 2, "Keyboard Controls:", curses.A_BOLD)
+        self.stdscr.addstr(14, 4, "Base (J1):     A/D - Rotate left/right")
+        self.stdscr.addstr(15, 4, "Shoulder (J2): W/S - Move up/down")
+        self.stdscr.addstr(16, 4, "Elbow (J3):    I/K - Move up/down")
+        self.stdscr.addstr(17, 4, "Wrist1 (J4):   J/L - Rotate left/right")
+        self.stdscr.addstr(18, 4, "Wrist2 (J5):   Q/E - Rotate left/right")
+        self.stdscr.addstr(19, 4, "Wrist3 (J6):   U/O - Rotate left/right")
+        self.stdscr.addstr(20, 4, "Gripper:       F/H - Open/close")
+        self.stdscr.addstr(22, 4, "ESC - Exit teleoperation", curses.A_BOLD)
 
         return self
 
-    def __exit__(self, *args: object) -> None:
-        self.exit = True
-        self._thread.join()
-        curses.endwin()
+    def on_refresh(self, key: int) -> None:  # noqa: C901, PLR0912
+        if key == self.KEY_ESC:
+            self.exit()
+        elif key == ord("w"):
+            self.target_pos[1] += 5000
+        elif key == ord("s"):
+            self.target_pos[1] -= 5000
+        elif key == ord("a"):
+            self.target_pos[0] += 5000
+        elif key == ord("d"):
+            self.target_pos[0] -= 5000
+        elif key == ord("q"):
+            self.target_pos[4] += 5000
+        elif key == ord("e"):
+            self.target_pos[4] -= 5000
+        elif key == ord("i"):
+            self.target_pos[2] -= 5000
+        elif key == ord("k"):
+            self.target_pos[2] += 5000
+        elif key == ord("j"):
+            self.target_pos[3] -= 5000
+        elif key == ord("l"):
+            self.target_pos[3] += 5000
+        elif key == ord("u"):
+            self.target_pos[5] -= 5000
+        elif key == ord("o"):
+            self.target_pos[5] += 5000
+        elif key == ord("f"):
+            self.target_pos[6] += 5000
+        elif key == ord("h"):
+            self.target_pos[6] -= 5000
 
-    def thread_worker(self) -> None:  # noqa: C901, PLR0912
-        while not self.exit:
-            key = self._stdscr.getch()
-            if key == self.KEY_ESC:
-                self.exit = True
-            elif key == ord("w"):
-                self.positions[1] += 5000
-            elif key == ord("s"):
-                self.positions[1] -= 5000
-            elif key == ord("a"):
-                self.positions[0] += 5000
-            elif key == ord("d"):
-                self.positions[0] -= 5000
-            elif key == ord("q"):
-                self.positions[4] += 5000
-            elif key == ord("e"):
-                self.positions[4] -= 5000
-            elif key == ord("i"):
-                self.positions[2] -= 5000
-            elif key == ord("k"):
-                self.positions[2] += 5000
-            elif key == ord("j"):
-                self.positions[3] -= 5000
-            elif key == ord("l"):
-                self.positions[3] += 5000
-            elif key == ord("u"):
-                self.positions[5] -= 5000
-            elif key == ord("o"):
-                self.positions[5] += 5000
-            elif key == ord("f"):
-                self.gripper_position += 5000
-            elif key == ord("h"):
-                self.gripper_position -= 5000
+        for i in range(7):
+            diff = self.target_pos[i] - self.current_pos[i]
+            info = f"{self.target_pos[i]:<12} {self.current_pos[i]:<12} {diff:<10}"
+            self.stdscr.addstr(5 + i, 18, info)
 
-            for i in range(6):
-                diff = self.positions[i] - self.feedbacks[i]
-                info = f"{self.positions[i]:<12} {self.feedbacks[i]:<12} {diff:<10}"
-                self._stdscr.addstr(5 + i, 18, info)
-
-            diff = self.gripper_position - self.gripper_feedback
-            info = f"{self.gripper_position:<12} {self.gripper_feedback:<12} {diff:<10}"
-            self._stdscr.addstr(11, 18, info)
-
-            self._stdscr.refresh()
-
-            time.sleep(1 / 30)
+        self.stdscr.addstr(11, 18, info)
 
 
 def command_teleop_joint(args: argparse.Namespace) -> None:
-    with PiperInterface(args.can_interface) as piper, Screen() as screen:
-        while not screen.exit:
+    with PiperInterface(args.can_interface) as piper, TeleopJointApp() as app:
+        while not app.is_exited():
             match piper.read_message():
                 case JointFeedback12Message() as msg:
-                    screen.feedbacks[0] = msg.joint_1
-                    screen.feedbacks[1] = msg.joint_2
+                    app.current_pos[0] = msg.joint_1
+                    app.current_pos[1] = msg.joint_2
 
                     piper.set_motion_control_b("joint", 20)
-                    piper.set_joint_control_12(*screen.positions[0:2])
+                    piper.set_joint_control_12(*app.target_pos[0:2])
 
                 case JointFeedback34Message() as msg:
-                    screen.feedbacks[2] = msg.joint_3
-                    screen.feedbacks[3] = msg.joint_4
+                    app.current_pos[2] = msg.joint_3
+                    app.current_pos[3] = msg.joint_4
 
-                    piper.set_joint_control_34(*screen.positions[2:4])
+                    piper.set_joint_control_34(*app.target_pos[2:4])
 
                 case JointFeedback56Message() as msg:
-                    screen.feedbacks[4] = msg.joint_5
-                    screen.feedbacks[5] = msg.joint_6
+                    app.current_pos[4] = msg.joint_5
+                    app.current_pos[5] = msg.joint_6
 
-                    piper.set_joint_control_56(*screen.positions[4:6])
+                    piper.set_joint_control_56(*app.target_pos[4:6])
 
                 case GripperFeedbackMessage() as msg:
-                    screen.gripper_feedback = msg.position
-                    piper.set_gripper_control(screen.gripper_position, 1000)
+                    app.current_pos[6] = msg.position
+                    piper.set_gripper_control(app.target_pos[6], 1000)
 
 
 __all__ = ["command_teleop_joint"]
