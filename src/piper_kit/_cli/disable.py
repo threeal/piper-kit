@@ -13,6 +13,7 @@ def command_disable(args: argparse.Namespace) -> None:
 
         positions = [0, 0, 0, 0, 17000, 0]
         piper.set_joint_control(*positions)
+        piper.set_gripper_control(90000, 1000)
 
         while True:
             feedbacks = piper.read_all_joint_feedbacks()
@@ -23,6 +24,7 @@ def command_disable(args: argparse.Namespace) -> None:
                 break
 
         piper.disable_all_joints()
+        piper.disable_gripper()
 
 
 __all__ = ["command_disable"]
