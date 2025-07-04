@@ -253,6 +253,23 @@ class PiperInterface:
 
         return feedbacks
 
+    def read_gripper_feedback(self) -> GripperFeedbackMessage:
+        """Read position feedback from the gripper.
+
+        Blocks until gripper feedback is received.
+
+        Returns:
+            A GripperFeedbackMessage containing the current gripper position.
+
+        """
+        feedback = None
+        while feedback is None:
+            match self.read_message():
+                case GripperFeedbackMessage() as msg:
+                    feedback = msg
+
+        return feedback
+
     def read_all_motor_info_bs(self) -> list[MotorInfoBMessage]:
         """Read motor information from all 6 joints.
 
