@@ -2,6 +2,7 @@ import argparse
 
 from .disable import command_disable
 from .enable import command_enable
+from .play import command_play
 from .teleop import command_teleop_follow, command_teleop_joint
 
 
@@ -19,6 +20,15 @@ def main() -> None:
     enable_parser = subparsers.add_parser("enable", help="enable the PiPER arm")
     enable_parser.set_defaults(func=command_enable)
     enable_parser.add_argument(
+        "can_interface", nargs="?", default="can0", help="CAN interface to use"
+    )
+
+    play_parser = subparsers.add_parser(
+        "play", help="play trajectories with the PiPER arm"
+    )
+    play_parser.set_defaults(func=command_play)
+    play_parser.add_argument("csv_file", help="CSV file containing trajectory data")
+    play_parser.add_argument(
         "can_interface", nargs="?", default="can0", help="CAN interface to use"
     )
 
