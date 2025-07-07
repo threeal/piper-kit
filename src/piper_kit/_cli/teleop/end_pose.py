@@ -1,5 +1,4 @@
 import argparse
-from typing import Self
 
 from cursers import ThreadedApp
 
@@ -22,7 +21,7 @@ class TeleopEndPoseApp(ThreadedApp):
         self.current_gripper = 0
         self.target_gripper = 0
 
-    def on_enter(self) -> Self:
+    def on_enter(self) -> None:
         title = "PiPER End-Effector Pose Teleoperation"
         self.draw_text(0, (55 - len(title)) // 2, title, bold=True)
 
@@ -43,8 +42,6 @@ class TeleopEndPoseApp(ThreadedApp):
         self.draw_text(19, 4, "J/L - Rotate yaw rotation")
         self.draw_text(20, 4, "F/H - Open/close gripper")
         self.draw_text(22, 4, "ESC - Exit teleoperation", bold=True)
-
-        return self
 
     def on_update(self, key: int) -> None:  # noqa: C901, PLR0912
         match chr(key) if key != -1 else None:

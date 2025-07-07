@@ -1,5 +1,4 @@
 import argparse
-from typing import Self
 
 from cursers import ThreadedApp
 
@@ -19,7 +18,7 @@ class TeleopJointApp(ThreadedApp):
         self.current_pos = [0, 0, 0, 0, 0, 0, 0]
         self.target_pos = [0, 0, 0, 0, 0, 0, 45000]
 
-    def on_enter(self) -> Self:
+    def on_enter(self) -> None:
         title = "PiPER Joint Teleoperation"
         self.draw_text(0, (55 - len(title)) // 2, title, bold=True)
 
@@ -45,8 +44,6 @@ class TeleopJointApp(ThreadedApp):
         self.draw_text(19, 4, "Wrist3 (J6):   U/O - Rotate left/right")
         self.draw_text(20, 4, "Gripper:       F/H - Open/close")
         self.draw_text(22, 4, "ESC - Exit teleoperation", bold=True)
-
-        return self
 
     def on_update(self, key: int) -> None:  # noqa: C901, PLR0912
         match chr(key) if key != -1 else None:

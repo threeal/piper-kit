@@ -1,5 +1,4 @@
 import argparse
-from typing import Self
 
 from cursers import Thread, ThreadedApp
 
@@ -19,7 +18,7 @@ class TeleopFollowApp(ThreadedApp):
         self.leader_pos = [0, 0, 0, 0, 0, 0, 0]
         self.follower_pos = [0, 0, 0, 0, 0, 0, 0]
 
-    def on_enter(self) -> Self:
+    def on_enter(self) -> None:
         title = "PiPER Leader-Follower Teleoperation"
         self.draw_text(0, (55 - len(title)) // 2, title, bold=True)
 
@@ -38,8 +37,6 @@ class TeleopFollowApp(ThreadedApp):
 
         self.draw_text(13, 2, "Keyboard Controls:", bold=True)
         self.draw_text(14, 4, "ESC - Exit teleoperation", bold=True)
-
-        return self
 
     def on_update(self, key: int) -> None:
         match chr(key) if key != -1 else None:
