@@ -1,9 +1,9 @@
 import argparse
-import curses
 from typing import Self
 
+from cursers import ThreadedApp
+
 from piper_kit import PiperInterface
-from piper_kit._cli.utils import App
 from piper_kit.messages import (
     GripperFeedbackMessage,
     JointFeedback12Message,
@@ -12,85 +12,87 @@ from piper_kit.messages import (
 )
 
 
-class TeleopJointApp(App):
+class TeleopJointApp(ThreadedApp):
     def __init__(self) -> None:
         super().__init__()
 
         self.current_pos = [0, 0, 0, 0, 0, 0, 0]
         self.target_pos = [0, 0, 0, 0, 0, 0, 45000]
 
-    def on_init(self) -> Self:
+    def on_enter(self) -> Self:
         title = "PiPER Joint Teleoperation"
-        self.stdscr.addstr(0, (55 - len(title)) // 2, title, curses.A_BOLD)
+        self.draw_text(0, (55 - len(title)) // 2, title, bold=True)
 
-        self.stdscr.addstr(3, 2, "Joint Information:", curses.A_BOLD)
+        self.draw_text(3, 2, "Joint Information:", bold=True)
 
         headers = f"{'Joint':<15} {'Target':<12} {'Current':<12} {'Diff':<10}"
-        self.stdscr.addstr(4, 2, headers, curses.A_UNDERLINE)
+        self.draw_text(4, 2, headers, underline=True)
 
-        self.stdscr.addstr(5, 2, "Base (J1):")
-        self.stdscr.addstr(6, 2, "Shoulder (J2):")
-        self.stdscr.addstr(7, 2, "Elbow (J3):")
-        self.stdscr.addstr(8, 2, "Wrist1 (J4):")
-        self.stdscr.addstr(9, 2, "Wrist2 (J5):")
-        self.stdscr.addstr(10, 2, "Wrist3 (J6):")
-        self.stdscr.addstr(11, 2, "Gripper:")
+        self.draw_text(5, 2, "Base (J1):")
+        self.draw_text(6, 2, "Shoulder (J2):")
+        self.draw_text(7, 2, "Elbow (J3):")
+        self.draw_text(8, 2, "Wrist1 (J4):")
+        self.draw_text(9, 2, "Wrist2 (J5):")
+        self.draw_text(10, 2, "Wrist3 (J6):")
+        self.draw_text(11, 2, "Gripper:")
 
-        self.stdscr.addstr(13, 2, "Keyboard Controls:", curses.A_BOLD)
-        self.stdscr.addstr(14, 4, "Base (J1):     A/D - Rotate left/right")
-        self.stdscr.addstr(15, 4, "Shoulder (J2): W/S - Move up/down")
-        self.stdscr.addstr(16, 4, "Elbow (J3):    I/K - Move up/down")
-        self.stdscr.addstr(17, 4, "Wrist1 (J4):   J/L - Rotate left/right")
-        self.stdscr.addstr(18, 4, "Wrist2 (J5):   Q/E - Rotate left/right")
-        self.stdscr.addstr(19, 4, "Wrist3 (J6):   U/O - Rotate left/right")
-        self.stdscr.addstr(20, 4, "Gripper:       F/H - Open/close")
-        self.stdscr.addstr(22, 4, "ESC - Exit teleoperation", curses.A_BOLD)
+        self.draw_text(13, 2, "Keyboard Controls:", bold=True)
+        self.draw_text(14, 4, "Base (J1):     A/D - Rotate left/right")
+        self.draw_text(15, 4, "Shoulder (J2): W/S - Move up/down")
+        self.draw_text(16, 4, "Elbow (J3):    I/K - Move up/down")
+        self.draw_text(17, 4, "Wrist1 (J4):   J/L - Rotate left/right")
+        self.draw_text(18, 4, "Wrist2 (J5):   Q/E - Rotate left/right")
+        self.draw_text(19, 4, "Wrist3 (J6):   U/O - Rotate left/right")
+        self.draw_text(20, 4, "Gripper:       F/H - Open/close")
+        self.draw_text(22, 4, "ESC - Exit teleoperation", bold=True)
 
         return self
 
-    def on_refresh(self, key: int) -> None:  # noqa: C901, PLR0912
-        if key == self.KEY_ESC:
-            self.exit()
-        elif key == ord("w"):
-            self.target_pos[1] += 5000
-        elif key == ord("s"):
-            self.target_pos[1] -= 5000
-        elif key == ord("a"):
-            self.target_pos[0] += 5000
-        elif key == ord("d"):
-            self.target_pos[0] -= 5000
-        elif key == ord("q"):
-            self.target_pos[4] += 5000
-        elif key == ord("e"):
-            self.target_pos[4] -= 5000
-        elif key == ord("i"):
-            self.target_pos[2] -= 5000
-        elif key == ord("k"):
-            self.target_pos[2] += 5000
-        elif key == ord("j"):
-            self.target_pos[3] -= 5000
-        elif key == ord("l"):
-            self.target_pos[3] += 5000
-        elif key == ord("u"):
-            self.target_pos[5] -= 5000
-        elif key == ord("o"):
-            self.target_pos[5] += 5000
-        elif key == ord("f"):
-            self.target_pos[6] += 5000
-        elif key == ord("h"):
-            self.target_pos[6] -= 5000
+    def on_update(self, key: int) -> None:  # noqa: C901, PLR0912
+        match chr(key) if key != -1 else None:
+            case "\x1b":  # ESC
+                self.exit()
+                return
+            case "w" | "W":
+                self.target_pos[1] += 5000
+            case "s" | "S":
+                self.target_pos[1] -= 5000
+            case "a" | "A":
+                self.target_pos[0] += 5000
+            case "d" | "D":
+                self.target_pos[0] -= 5000
+            case "q" | "Q":
+                self.target_pos[4] += 5000
+            case "e" | "E":
+                self.target_pos[4] -= 5000
+            case "i" | "I":
+                self.target_pos[2] -= 5000
+            case "k" | "K":
+                self.target_pos[2] += 5000
+            case "j" | "J":
+                self.target_pos[3] -= 5000
+            case "l" | "L":
+                self.target_pos[3] += 5000
+            case "u" | "U":
+                self.target_pos[5] -= 5000
+            case "o" | "O":
+                self.target_pos[5] += 5000
+            case "f" | "F":
+                self.target_pos[6] += 5000
+            case "h" | "H":
+                self.target_pos[6] -= 5000
 
         for i in range(7):
             diff = self.target_pos[i] - self.current_pos[i]
             info = f"{self.target_pos[i]:<12} {self.current_pos[i]:<12} {diff:<10}"
-            self.stdscr.addstr(5 + i, 18, info)
+            self.draw_text(5 + i, 18, info)
 
-        self.stdscr.addstr(11, 18, info)
+        self.draw_text(11, 18, info)
 
 
 def command_teleop_joint(args: argparse.Namespace) -> None:
     with PiperInterface(args.can_interface) as piper, TeleopJointApp() as app:
-        while not app.is_exited():
+        while app.is_running():
             match piper.read_message():
                 case JointFeedback12Message() as msg:
                     app.current_pos[0] = msg.joint_1
