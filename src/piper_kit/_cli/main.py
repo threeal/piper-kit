@@ -3,7 +3,7 @@ import argparse
 from .disable import command_disable
 from .enable import command_enable
 from .play import command_play
-from .teleop import command_teleop_follow, command_teleop_joint
+from .teleop import command_teleop_end_pose, command_teleop_follow, command_teleop_joint
 
 
 def main() -> None:
@@ -34,6 +34,14 @@ def main() -> None:
 
     teleop_parser = subparsers.add_parser("teleop", help="teleop the PiPER arm")
     teleop_subparsers = teleop_parser.add_subparsers(required=True)
+
+    teleop_end_pose_parser = teleop_subparsers.add_parser(
+        "end_pose", help="teleop the end-effector pose of PiPER arm"
+    )
+    teleop_end_pose_parser.set_defaults(func=command_teleop_end_pose)
+    teleop_end_pose_parser.add_argument(
+        "can_interface", nargs="?", default="can0", help="CAN interface to use"
+    )
 
     teleop_follow_parser = teleop_subparsers.add_parser(
         "follow", help="teleop the follower PiPER arm using the leader PiPER arm"
