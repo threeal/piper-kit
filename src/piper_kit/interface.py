@@ -7,6 +7,9 @@ import can
 
 from .messages import (
     EnableJointMessage,
+    EndPoseControlRyMessage,
+    EndPoseControlXyMessage,
+    EndPoseControlZpMessage,
     GripperControlMessage,
     GripperFeedbackMessage,
     JointControl12Message,
@@ -66,6 +69,60 @@ class PiperInterface:
 
         """
         self.bus.send(MotionControlBMessage(control_mode, move_mode, move_speed_rate))
+
+    def set_end_pose_control_xy(self, x: int, y: int) -> None:
+        """Set X and Y positions control of end-effector pose.
+
+        Args:
+            x: Target X position in 0.001 mm.
+            y: Target Y position in 0.001 mm.
+
+        """
+        self.bus.send(EndPoseControlXyMessage(x, y))
+
+    def set_end_pose_control_zp(self, z: int, pitch: int) -> None:
+        """Set Z position and pitch rotation control of end-effector pose.
+
+        Args:
+            z: Target Z position in 0.001 mm.
+            pitch: Target pitch rotation in 0.001 degrees.
+
+        """
+        self.bus.send(EndPoseControlZpMessage(z, pitch))
+
+    def set_end_pose_control_ry(self, roll: int, yaw: int) -> None:
+        """Set roll and yaw rotations control of end-effector pose.
+
+        Args:
+            roll: Target roll rotation in 0.001 degrees.
+            yaw: Target yaw rotation in 0.001 degrees.
+
+        """
+        self.bus.send(EndPoseControlRyMessage(roll, yaw))
+
+    def set_end_pose_control(  # noqa: PLR0913
+        self,
+        x: int,
+        y: int,
+        z: int,
+        pitch: int,
+        roll: int,
+        yaw: int,
+    ) -> None:
+        """Set position and rotation control of end-effector pose.
+
+        Args:
+            x: Target X position in 0.001 mm.
+            y: Target Y position in 0.001 mm.
+            z: Target Z position in 0.001 mm.
+            pitch: Target pitch rotation in 0.001 degrees.
+            roll: Target roll rotation in 0.001 degrees.
+            yaw: Target yaw rotation in 0.001 degrees.
+
+        """
+        self.set_end_pose_control_xy(x, y)
+        self.set_end_pose_control_zp(z, pitch)
+        self.set_end_pose_control_ry(roll, yaw)
 
     def set_joint_control_12(self, joint_1: int, joint_2: int) -> None:
         """Set position control for joints 1 and 2.
