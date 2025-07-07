@@ -2,27 +2,27 @@
 name = "piper-kit"
 version = "0.1.0"
 dependencies = [
-    "python-can>=4.5.0",
+  "python-can>=4.5.0",
 ]
 requires-python = ">=3.13"
 authors = [
-    {name = "Alfi Maulana", email = "alfi.maulana.f@gmail.com"},
+  { name = "Alfi Maulana", email = "alfi.maulana.f@gmail.com" },
 ]
 description = "SDK and CLI tools for AgileX PiPER robotic arm"
 readme = "README.md"
 license = "MIT"
 keywords = ["robotics", "can-bus", "agilex", "piper", "robotic-arm", "automation", "sdk", "cli"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.13",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: System :: Hardware :: Hardware Drivers",
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: System :: Hardware :: Hardware Drivers",
 ]
 
 [project.scripts]
@@ -38,8 +38,8 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "lefthook>=1.11.14",
-    "ruff>=0.11.13",
+  "lefthook>=1.11.14",
+  "ruff>=0.11.13",
 ]
 
 [tool.hatch.build.targets.sdist]
