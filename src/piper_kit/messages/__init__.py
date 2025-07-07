@@ -15,6 +15,9 @@ from .receive import (
 )
 from .transmit import (
     EnableJointMessage,
+    EndPoseControlRyMessage,
+    EndPoseControlXyMessage,
+    EndPoseControlZpMessage,
     GripperControlMessage,
     JointControl12Message,
     JointControl34Message,
@@ -25,6 +28,9 @@ from .transmit import (
 
 __all__ = [
     "EnableJointMessage",
+    "EndPoseControlRyMessage",
+    "EndPoseControlXyMessage",
+    "EndPoseControlZpMessage",
     "GripperControlMessage",
     "GripperFeedbackMessage",
     "JointControl12Message",

@@ -14,7 +14,7 @@ class MotionControlBMessage(TransmitMessage):
     MAX_MOVE_SPEED_RATE = 100
 
     ControlMode = Literal["standby", "can", "ethernet", "wifi", "offline"]
-    MoveMode = Literal["position", "joint", "linear", "circular"]
+    MoveMode = Literal["end_pose", "joint", "linear", "circular"]
 
     class InvalidControlModeError(ValueError):
         """Raised when an invalid control mode is provided."""
@@ -95,7 +95,7 @@ class MotionControlBMessage(TransmitMessage):
 
         """
         match mode:
-            case "position":
+            case "end_pose":
                 return 0x00
             case "joint":
                 return 0x01
@@ -116,7 +116,7 @@ class MotionControlBMessage(TransmitMessage):
 
         Args:
             control_mode: Control mode ('can', 'standby', etc.)
-            move_mode: Movement mode ('joint', 'position', etc.)
+            move_mode: Movement mode ('joint', 'end_pose', etc.)
             move_speed_rate: Speed rate (0-100)
 
         Raises:
