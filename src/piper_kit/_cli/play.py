@@ -16,6 +16,7 @@ def command_play(args: argparse.Namespace) -> None:
     with (
         PiperInterface(args.can_interface) as piper,
         Path(args.csv_file).open() as csv_file,
+        Recorder(record_file=args.record_file) as recorder,
     ):
         reader = csv.reader(csv_file)
 
