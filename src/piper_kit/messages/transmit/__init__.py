@@ -7,6 +7,7 @@ from .end_pose_control import (
     EndPoseControlZpMessage,
 )
 from .gripper_control import GripperControlMessage
+from .joint_config import JointConfigMessage
 from .joint_control import (
     JointControl12Message,
     JointControl34Message,
@@ -21,6 +22,7 @@ __all__ = [
     "EndPoseControlXyMessage",
     "EndPoseControlZpMessage",
     "GripperControlMessage",
+    "JointConfigMessage",
     "JointControl12Message",
     "JointControl34Message",
     "JointControl56Message",

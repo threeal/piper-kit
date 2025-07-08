@@ -1,5 +1,6 @@
 import argparse
 
+from .clear import command_clear
 from .disable import command_disable
 from .enable import command_enable
 from .play import command_play
@@ -10,6 +11,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="piper")
     parser.add_argument("-v", "--version", action="version", version="0.1.0")
     subparsers = parser.add_subparsers(required=True)
+
+    clear_parser = subparsers.add_parser("clear", help="clear errors of the PiPER arm")
+    clear_parser.set_defaults(func=command_clear)
+    clear_parser.add_argument(
+        "can_interface", nargs="?", default="can0", help="CAN interface to use"
+    )
 
     disable_parser = subparsers.add_parser("disable", help="disable the PiPER arm")
     disable_parser.set_defaults(func=command_disable)

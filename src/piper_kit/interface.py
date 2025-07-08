@@ -12,6 +12,7 @@ from .messages import (
     EndPoseControlZpMessage,
     GripperControlMessage,
     GripperFeedbackMessage,
+    JointConfigMessage,
     JointControl12Message,
     JointControl34Message,
     JointControl56Message,
@@ -253,6 +254,37 @@ class PiperInterface:
     def disable_all_joints(self) -> None:
         """Disable all joints simultaneously."""
         self.enable_all_joints(enable=False)
+
+    def set_joint_config(
+        self,
+        joint_id: JointConfigMessage.JointId,
+        *,
+        set_zero: bool = False,
+        clear_error: bool = False,
+    ) -> None:
+        """Set the configuration of a specific joint.
+
+        Args:
+            joint_id: Joint ID (1-6 for individual joints, 7 for all joints)
+            set_zero: Whether to set the current joint position as the zero position
+            clear_error: Whether to clear the current joint error codes
+
+        """
+        self.bus.send(
+            JointConfigMessage(joint_id, set_zero=set_zero, clear_error=clear_error)
+        )
+
+    def set_all_joint_configs(
+        self, *, set_zero: bool = False, clear_error: bool = False
+    ) -> None:
+        """Set the configuration of all joints.
+
+        Args:
+            set_zero: Whether to set the current joint position as the zero position
+            clear_error: Whether to clear the current joint error codes
+
+        """
+        self.set_joint_config(7, set_zero=set_zero, clear_error=clear_error)
 
     def read_message(self) -> ReceiveMessage:
         """Read a single message from the CAN bus.
