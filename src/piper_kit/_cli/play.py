@@ -26,28 +26,34 @@ def command_play(args: argparse.Namespace) -> None:
         next_gripper = prev_gripper
 
         try:
-            start_t = time.time()
-            prev_t = start_t
-            next_t = start_t
+            prev_t = time.time()
+            dt = 0
+            max_dt = 0
             while True:
                 t = time.time()
-                while t >= next_t:
-                    prev_t = next_t
+                dt += t - prev_t
+                prev_t = t
+
+                while dt >= max_dt:
+                    dt -= max_dt
+
                     prev_joints = next_joints
                     prev_gripper = next_gripper
 
                     row = next(reader)
-                    next_t = start_t + float(row[0])
+                    max_dt = float(row[0])
                     next_joints = [float(v) for v in row[1:7]]
                     next_gripper = float(row[7])
 
-                    sys.stdout.write(f"next target: {[*next_joints, next_gripper]}\n")
+                    sys.stdout.write(
+                        f"next target: {[max_dt, *next_joints, next_gripper]}\n"
+                    )
 
                 joints = [
-                    interpolate(prev_t, prev_joints[i], next_t, next_joints[i], t)
+                    interpolate(0, prev_joints[i], max_dt, next_joints[i], dt)
                     for i in range(6)
                 ]
-                gripper = interpolate(prev_t, prev_gripper, next_t, next_gripper, t)
+                gripper = interpolate(0, prev_gripper, max_dt, next_gripper, dt)
 
                 piper.set_motion_control_b("joint", 100)
                 piper.set_joint_control(*(round(j) for j in joints))
