@@ -1,5 +1,6 @@
 import argparse
 import csv
+import h5py
 import sys
 import time
 from pathlib import Path
@@ -7,64 +8,59 @@ from pathlib import Path
 from piper_kit import PiperInterface
 
 
-def interpolate(x0: float, y0: float, x1: float, y1: float, x: float) -> float:
-    return y0 + (y1 - y0) * (x - x0) / (x1 - x0)
-
-
 def command_play(args: argparse.Namespace) -> None:
     sys.stdout.write("initializing...\n")
     with (
         PiperInterface(args.can_interface) as piper,
-        Path(args.csv_file).open() as csv_file,
+        h5py.File(args.csv_file, "r") as f
     ):
-        reader = csv.reader(csv_file)
+        joint_controls_12 = f["joint_controls_12"][:]
+        joint_controls_34 = f["joint_controls_34"][:]
+        joint_controls_56 = f["joint_controls_56"][:]
+        gripper_controls = f["gripper_controls"][:]
+
+        jc12_i = 0
+        jc34_i = 0
+        jc56_i = 0
+        gc_i = 0
 
         sys.stdout.write("reading joint and gripper positions...\n")
-        prev_joints = piper.read_all_joint_feedbacks()
-        prev_gripper = piper.read_gripper_feedback().position
-        next_joints = prev_joints
-        next_gripper = prev_gripper
+        joints = piper.read_all_joint_feedbacks()
+        gripper = piper.read_gripper_feedback().position
 
-        try:
-            prev_t = time.time()
-            dt = 0
-            max_dt = 0
-            while True:
-                t = time.time()
-                dt += t - prev_t
-                prev_t = t
+        start_t = time.time()
+        while jc12_i < len(joint_controls_12) or jc34_i < len(joint_controls_34) or jc56_i < len(joint_controls_56) or gc_i < len(gripper_controls):
+            t = time.time() - start_t
 
-                while dt >= max_dt:
-                    dt -= max_dt
+            while jc12_i < len(joint_controls_12) and joint_controls_12[jc12_i][0] <= t:
+                joints[0] = joint_controls_12[jc12_i][1]
+                joints[1] = joint_controls_12[jc12_i][2]
+                jc12_i += 1
 
-                    prev_joints = next_joints
-                    prev_gripper = next_gripper
+            while jc34_i < len(joint_controls_34) and joint_controls_34[jc34_i][0] <= t:
+                joints[2] = joint_controls_34[jc34_i][1]
+                joints[3] = joint_controls_34[jc34_i][2]
+                jc34_i += 1
 
-                    row = next(reader)
-                    max_dt = float(row[0])
-                    next_joints = [float(v) for v in row[1:7]]
-                    next_gripper = float(row[7])
+            while jc56_i < len(joint_controls_56) and joint_controls_56[jc56_i][0] <= t:
+                joints[4] = joint_controls_56[jc56_i][1]
+                joints[5] = joint_controls_56[jc56_i][2]
+                jc56_i += 1
 
-                    sys.stdout.write(
-                        f"next target: {[max_dt, *next_joints, next_gripper]}\n"
-                    )
+            while gc_i < len(gripper_controls) and gripper_controls[gc_i][0] <= t:
+                gripper = gripper_controls[gc_i][1]
+                gc_i += 1
 
-                joints = [
-                    interpolate(0, prev_joints[i], max_dt, next_joints[i], dt)
-                    for i in range(6)
-                ]
-                gripper = interpolate(0, prev_gripper, max_dt, next_gripper, dt)
 
-                piper.set_motion_control_b("joint", 100)
-                piper.set_joint_control(*(round(j) for j in joints))
-                piper.set_gripper_control(round(gripper), 1000)
-
-                time.sleep(1 / 100)
-
-        except StopIteration:
             piper.set_motion_control_b("joint", 100)
-            piper.set_joint_control(*(round(j) for j in prev_joints))
-            piper.set_gripper_control(round(prev_gripper), 1000)
+            piper.set_joint_control(*(round(j) for j in joints))
+            piper.set_gripper_control(round(gripper), 1000)
+
+            time.sleep(1 / 100)
+
+        piper.set_motion_control_b("joint", 100)
+        piper.set_joint_control(*(round(j) for j in joints))
+        piper.set_gripper_control(round(gripper), 1000)
 
         sys.stdout.write("finished playing trajectories\n")
 
