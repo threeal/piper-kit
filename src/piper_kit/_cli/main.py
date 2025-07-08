@@ -9,7 +9,7 @@ from .teleop import command_teleop_end_pose, command_teleop_follow, command_tele
 
 def main() -> None:
     parser = argparse.ArgumentParser(prog="piper")
-    parser.add_argument("-v", "--version", action="version", version="0.1.0")
+    parser.add_argument("-v", "--version", action="version", version="0.2.0")
     subparsers = parser.add_subparsers(required=True)
 
     clear_parser = subparsers.add_parser("clear", help="clear errors of the PiPER arm")
@@ -62,6 +62,11 @@ def main() -> None:
         nargs="?",
         default="can0",
         help="CAN interface of the follower to use",
+    )
+    teleop_follow_parser.add_argument(
+        "--record-file",
+        nargs="?",
+        help="Output file to record joint and gripper positions.",
     )
 
     teleop_joint_parser = teleop_subparsers.add_parser(
