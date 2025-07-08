@@ -1,6 +1,7 @@
 import argparse
 
 from cursers import Thread, ThreadedApp
+import cv2
 
 from piper_kit import PiperInterface
 from piper_kit._cli.utils import Recorder
@@ -85,13 +86,32 @@ class FollowerThread(Thread):
                     self._app.follower_pos[6] = msg.position
 
 
+class CaptureThread(Thread):
+    def __init__(self, recorder: Recorder, app: TeleopFollowApp) -> None:
+        super().__init__()
+        self._recorder = recorder
+        self._app = app
+
+    def run(self) -> None:
+        cap = cv2.VideoCapture(0)
+        cap.set(cv2.CAP_PROP_FPS, 60)
+
+        while self._app.is_running() and cap.isOpened():
+            ret, frame = cap.read()
+            if ret:
+                success, encoded_frame = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
+                if success:
+                    self._recorder.record_frame(encoded_frame)
+
+
 def command_teleop_follow(args: argparse.Namespace) -> None:
     with (
         PiperInterface(args.leader_can) as leader,
         PiperInterface(args.follower_can) as follower,
         Recorder(record_file=args.record_file) as recorder,
-        TeleopFollowApp(record_file=args.record_file) as app,
+        TeleopFollowApp() as app,
         FollowerThread(follower, recorder, app),
+        CaptureThread(recorder, app),
     ):
         while app.is_running():
             match leader.read_message():
