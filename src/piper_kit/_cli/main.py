@@ -76,5 +76,4 @@ def main() -> None:
     args.func(args)
 
 
-if __name__ == "__main__":
-    main()
+__all__ = ["main"]
