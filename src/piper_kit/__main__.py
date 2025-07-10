@@ -2,7 +2,7 @@
 
 import argparse
 
-from ._cli import register_commands
+from ._commands import register_commands
 
 
 def _main() -> None:
