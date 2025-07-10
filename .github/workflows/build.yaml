@@ -24,5 +24,8 @@ jobs:
       - name: Check Lint
         run: uv run ruff check
 
+      - name: Build API Documentation
+        run: uv run pydoctor
+
       - name: Build Package
         run: uv build
