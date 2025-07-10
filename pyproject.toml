@@ -40,11 +40,19 @@ build-backend = "hatchling.build"
 [dependency-groups]
 dev = [
   "lefthook>=1.11.14",
+  "pydoctor>=25.4.0",
   "ruff>=0.11.13",
 ]
 
 [tool.hatch.build.targets.sdist]
 include = ["src"]
+
+[tool.pydoctor]
+add-package = ["src/piper_kit"]
+project-name = "PiPER Kit"
+docformat = "google"
+theme = "readthedocs"
+warnings-as-errors = true
 
 [tool.ruff.lint]
 select = ["ALL"]
