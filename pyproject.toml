@@ -27,7 +27,7 @@ classifiers = [
 ]
 
 [project.scripts]
-piper = "piper_kit._cli.main:main"
+piper = "piper_kit.__main__:_main"
 
 [project.urls]
 repository = "https://github.com/threeal/piper-kit.git"

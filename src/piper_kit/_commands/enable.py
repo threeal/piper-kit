@@ -4,7 +4,7 @@ import time
 from piper_kit import PiperInterface
 
 
-def command_enable(args: argparse.Namespace) -> None:
+def on_command(args: argparse.Namespace) -> None:
     with PiperInterface(args.can_interface) as piper:
         piper.enable_all_joints()
 
@@ -20,4 +20,12 @@ def command_enable(args: argparse.Namespace) -> None:
         piper.set_gripper_control(45000, 1000)
 
 
-__all__ = ["command_enable"]
+def register_enable_command(subparsers: argparse.ArgumentParser) -> None:
+    parser = subparsers.add_parser("enable", help="enable the PiPER arm")
+    parser.set_defaults(func=on_command)
+    parser.add_argument(
+        "can_interface", nargs="?", default="can0", help="CAN interface to use"
+    )
+
+
+__all__ = ["register_enable_command"]

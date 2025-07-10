@@ -87,7 +87,7 @@ class TeleopEndPoseApp(ThreadedApp):
         self.draw_text(9, 22, f"{self.current_gripper:>8}")
 
 
-def command_teleop_end_pose(args: argparse.Namespace) -> None:
+def on_command(args: argparse.Namespace) -> None:
     with PiperInterface(args.can_interface) as piper, TeleopEndPoseApp() as app:
         while app.is_running():
             match piper.read_message():
@@ -107,4 +107,14 @@ def command_teleop_end_pose(args: argparse.Namespace) -> None:
                     piper.set_gripper_control(app.target_gripper, 1000)
 
 
-__all__ = ["command_teleop_end_pose"]
+def register_end_pose_command(subparsers: argparse.ArgumentParser) -> None:
+    parser = subparsers.add_parser(
+        "end_pose", help="teleop the end-effector pose of PiPER arm"
+    )
+    parser.set_defaults(func=on_command)
+    parser.add_argument(
+        "can_interface", nargs="?", default="can0", help="CAN interface to use"
+    )
+
+
+__all__ = ["register_end_pose_command"]

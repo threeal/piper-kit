@@ -87,7 +87,7 @@ class TeleopJointApp(ThreadedApp):
         self.draw_text(11, 18, info)
 
 
-def command_teleop_joint(args: argparse.Namespace) -> None:
+def on_command(args: argparse.Namespace) -> None:
     with PiperInterface(args.can_interface) as piper, TeleopJointApp() as app:
         while app.is_running():
             match piper.read_message():
@@ -115,4 +115,14 @@ def command_teleop_joint(args: argparse.Namespace) -> None:
                     piper.set_gripper_control(app.target_pos[6], 1000)
 
 
-__all__ = ["command_teleop_joint"]
+def register_joint_command(subparsers: argparse.ArgumentParser) -> None:
+    parser = subparsers.add_parser(
+        "joint", help="teleop the joint positions of PiPER arm"
+    )
+    parser.set_defaults(func=on_command)
+    parser.add_argument(
+        "can_interface", nargs="?", default="can0", help="CAN interface to use"
+    )
+
+
+__all__ = ["register_joint_command"]

@@ -77,7 +77,7 @@ class FollowerThread(Thread):
                     self._app.follower_pos[6] = msg.position
 
 
-def command_teleop_follow(args: argparse.Namespace) -> None:
+def on_command(args: argparse.Namespace) -> None:
     with (
         PiperInterface(args.leader_can) as leader,
         PiperInterface(args.follower_can) as follower,
@@ -110,4 +110,18 @@ def command_teleop_follow(args: argparse.Namespace) -> None:
                     follower.set_gripper_control(msg.position, 1000)
 
 
-__all__ = ["command_teleop_follow"]
+def register_follow_command(subparsers: argparse.ArgumentParser) -> None:
+    parser = subparsers.add_parser(
+        "follow", help="teleop the follower PiPER arm using the leader PiPER arm"
+    )
+    parser.set_defaults(func=on_command)
+    parser.add_argument("leader_can", help="CAN interface of the leader to use")
+    parser.add_argument(
+        "follower_can",
+        nargs="?",
+        default="can0",
+        help="CAN interface of the follower to use",
+    )
+
+
+__all__ = ["register_follow_command"]
