@@ -1,5 +1,17 @@
-from .end_pose import command_teleop_end_pose
-from .follow import command_teleop_follow
-from .joint import command_teleop_joint
+import argparse
 
-__all__ = ["command_teleop_end_pose", "command_teleop_follow", "command_teleop_joint"]
+from .end_pose import register_end_pose_command
+from .follow import register_follow_command
+from .joint import register_joint_command
+
+
+def register_teleop_commands(subparsers: argparse.ArgumentParser) -> None:
+    parser = subparsers.add_parser("teleop", help="teleop the PiPER arm")
+    subparsers = parser.add_subparsers(required=True)
+
+    register_end_pose_command(subparsers)
+    register_follow_command(subparsers)
+    register_joint_command(subparsers)
+
+
+__all__ = ["register_teleop_commands"]

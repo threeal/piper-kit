@@ -6,7 +6,7 @@ from piper_kit import PiperInterface
 JOINT_TOLERANCE = 1000
 
 
-def command_disable(args: argparse.Namespace) -> None:
+def on_command(args: argparse.Namespace) -> None:
     with PiperInterface(args.can_interface) as piper:
         piper.set_motion_control_b("joint", 20)
         time.sleep(0.1)
@@ -27,4 +27,12 @@ def command_disable(args: argparse.Namespace) -> None:
         piper.disable_gripper()
 
 
-__all__ = ["command_disable"]
+def register_disable_command(subparsers: argparse.ArgumentParser) -> None:
+    parser = subparsers.add_parser("disable", help="disable the PiPER arm")
+    parser.set_defaults(func=on_command)
+    parser.add_argument(
+        "can_interface", nargs="?", default="can0", help="CAN interface to use"
+    )
+
+
+__all__ = ["register_disable_command"]

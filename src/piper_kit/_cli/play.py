@@ -11,7 +11,7 @@ def interpolate(x0: float, y0: float, x1: float, y1: float, x: float) -> float:
     return y0 + (y1 - y0) * (x - x0) / (x1 - x0)
 
 
-def command_play(args: argparse.Namespace) -> None:
+def on_command(args: argparse.Namespace) -> None:
     sys.stdout.write("initializing...\n")
     with (
         PiperInterface(args.can_interface) as piper,
@@ -69,4 +69,13 @@ def command_play(args: argparse.Namespace) -> None:
         sys.stdout.write("finished playing trajectories\n")
 
 
-__all__ = ["command_play"]
+def register_play_command(subparsers: argparse.ArgumentParser) -> None:
+    parser = subparsers.add_parser("play", help="play trajectories with the PiPER arm")
+    parser.set_defaults(func=on_command)
+    parser.add_argument("csv_file", help="CSV file containing trajectory data")
+    parser.add_argument(
+        "can_interface", nargs="?", default="can0", help="CAN interface to use"
+    )
+
+
+__all__ = ["register_play_command"]
