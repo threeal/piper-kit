@@ -4,6 +4,14 @@ from typing import Literal
 
 import can
 
+from piper_kit.errors import (
+    InvalidControlModeError,
+    InvalidGripperEffortError,
+    InvalidJointIdError,
+    InvalidMoveModeError,
+    InvalidMoveSpeedRateError,
+)
+
 
 class TransmitMessage(can.Message):
     """Base class for CAN messages sent to the PiPER robotic arm."""
@@ -52,42 +60,6 @@ class MotionControlBMessage(TransmitMessage):
     ControlMode = Literal["standby", "can", "ethernet", "wifi", "offline"]
     MoveMode = Literal["end_pose", "joint", "linear", "circular"]
 
-    class InvalidControlModeError(ValueError):
-        """Raised when an invalid control mode is provided."""
-
-        def __init__(self, mode: any) -> None:
-            """Initialize with invalid control mode.
-
-            Args:
-                mode: The invalid control mode that was provided
-
-            """
-            super().__init__(f"Invalid control mode: {mode!r}")
-
-    class InvalidMoveModeError(ValueError):
-        """Raised when an invalid move mode is provided."""
-
-        def __init__(self, mode: any) -> None:
-            """Initialize with invalid move mode.
-
-            Args:
-                mode: The invalid move mode that was provided
-
-            """
-            super().__init__(f"Invalid move mode: {mode!r}")
-
-    class InvalidMoveSpeedRateError(ValueError):
-        """Raised when an invalid move speed rate is provided."""
-
-        def __init__(self, rate: any) -> None:
-            """Initialize with invalid move speed rate.
-
-            Args:
-                rate: The invalid move speed rate that was provided
-
-            """
-            super().__init__(f"Invalid move speed rate: {rate!r}")
-
     @staticmethod
     def get_control_mode_byte(mode: ControlMode) -> int:
         """Convert control mode to byte value.
@@ -114,7 +86,7 @@ class MotionControlBMessage(TransmitMessage):
             case "offline":
                 return 0x07
             case _ as mode:
-                raise MotionControlBMessage.InvalidControlModeError(mode)
+                raise InvalidControlModeError(mode)
 
     @staticmethod
     def get_move_mode_byte(mode: MoveMode) -> int:
@@ -140,7 +112,7 @@ class MotionControlBMessage(TransmitMessage):
             case "circular":
                 return 0x03
             case _ as mode:
-                raise MotionControlBMessage.InvalidMoveModeError(mode)
+                raise InvalidMoveModeError(mode)
 
     def __init__(
         self,
@@ -162,7 +134,7 @@ class MotionControlBMessage(TransmitMessage):
 
         """
         if not self.MIN_MOVE_SPEED_RATE <= move_speed_rate <= self.MAX_MOVE_SPEED_RATE:
-            raise self.InvalidMoveSpeedRateError(move_speed_rate)
+            raise InvalidMoveSpeedRateError(move_speed_rate)
 
         super().__init__(
             self.ID,
@@ -300,18 +272,6 @@ class GripperControlMessage(TransmitMessage):
     MIN_GRIPPER_EFFORT = 0
     MAX_GRIPPER_EFFORT = 5000
 
-    class InvalidGripperEffortError(ValueError):
-        """Raised when an invalid gripper effort is provided."""
-
-        def __init__(self, effort: any) -> None:
-            """Initialize with invalid gripper effort.
-
-            Args:
-                effort: The invalid gripper effort that was provided
-
-            """
-            super().__init__(f"Invalid gripper effort: {effort!r}")
-
     def __init__(
         self,
         position: int,
@@ -332,7 +292,7 @@ class GripperControlMessage(TransmitMessage):
 
         """
         if not self.MIN_GRIPPER_EFFORT <= effort <= self.MAX_GRIPPER_EFFORT:
-            raise self.InvalidGripperEffortError(effort)
+            raise InvalidGripperEffortError(effort)
 
         super().__init__(
             self.ID,
@@ -353,18 +313,6 @@ class EnableJointMessage(TransmitMessage):
 
     JointId = Literal[1, 2, 3, 4, 5, 6, 7]
 
-    class InvalidJointIdError(ValueError):
-        """Raised when an invalid joint ID is provided."""
-
-        def __init__(self, joint_id: any) -> None:
-            """Initialize with invalid joint ID.
-
-            Args:
-                joint_id: The invalid joint ID that was provided
-
-            """
-            super().__init__(f"Invalid joint ID: {joint_id!r}")
-
     def __init__(self, joint_id: JointId, *, enable: bool = True) -> None:
         """Create joint enable/disable message.
 
@@ -377,7 +325,7 @@ class EnableJointMessage(TransmitMessage):
 
         """
         if not self.MIN_JOINT_ID <= joint_id <= self.MAX_JOINT_ID:
-            raise self.InvalidJointIdError(joint_id)
+            raise InvalidJointIdError(joint_id)
 
         super().__init__(self.ID, joint_id, 0x02 if enable else 0x01)
 
@@ -391,18 +339,6 @@ class JointConfigMessage(TransmitMessage):
     MAX_JOINT_ID = 7
 
     JointId = Literal[1, 2, 3, 4, 5, 6, 7]
-
-    class InvalidJointIdError(ValueError):
-        """Raised when an invalid joint ID is provided."""
-
-        def __init__(self, joint_id: any) -> None:
-            """Initialize with invalid joint ID.
-
-            Args:
-                joint_id: The invalid joint ID that was provided
-
-            """
-            super().__init__(f"Invalid joint ID: {joint_id!r}")
 
     def __init__(
         self, joint_id: JointId, *, set_zero: bool = False, clear_error: bool = False
@@ -419,7 +355,7 @@ class JointConfigMessage(TransmitMessage):
 
         """
         if not self.MIN_JOINT_ID <= joint_id <= self.MAX_JOINT_ID:
-            raise self.InvalidJointIdError(joint_id)
+            raise InvalidJointIdError(joint_id)
 
         super().__init__(
             self.ID,
