@@ -310,6 +310,11 @@ class PiperInterface:
         """
         msg = self.bus.recv()
         match msg.arbitration_id:
+            case _ if (
+                MotorInfoBMessage.ID1 <= msg.arbitration_id <= MotorInfoBMessage.ID6
+            ):
+                return MotorInfoBMessage(msg)
+
             case JointFeedback12Message.ID:
                 return JointFeedback12Message(msg)
 
@@ -322,13 +327,25 @@ class PiperInterface:
             case GripperFeedbackMessage.ID:
                 return GripperFeedbackMessage(msg)
 
-            case _ if (
-                MotorInfoBMessage.ID1 <= msg.arbitration_id <= MotorInfoBMessage.ID6
-            ):
-                return MotorInfoBMessage(msg)
-
             case _:
                 return UnknownMessage(msg)
+
+    def read_all_motor_info_bs(self) -> list[MotorInfoBMessage]:
+        """Read motor information from all 6 joints.
+
+        Blocks until motor info is received from all joints.
+
+        Returns:
+            List of 6 MotorInfoBMessage objects containing status and diagnostic info
+
+        """
+        infos = [None] * 6
+        while any(i is None for i in infos):
+            match self.read_message():
+                case MotorInfoBMessage() as msg:
+                    infos[msg.motor_id - 1] = msg
+
+        return infos
 
     def read_all_joint_feedbacks(self) -> list[int]:
         """Read current position feedback from all 6 joints.
@@ -372,23 +389,6 @@ class PiperInterface:
                     feedback = msg
 
         return feedback
-
-    def read_all_motor_info_bs(self) -> list[MotorInfoBMessage]:
-        """Read motor information from all 6 joints.
-
-        Blocks until motor info is received from all joints.
-
-        Returns:
-            List of 6 MotorInfoBMessage objects containing status and diagnostic info
-
-        """
-        infos = [None] * 6
-        while any(i is None for i in infos):
-            match self.read_message():
-                case MotorInfoBMessage() as msg:
-                    infos[msg.motor_id - 1] = msg
-
-        return infos
 
 
 __all__ = ["PiperInterface"]
