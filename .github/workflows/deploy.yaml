@@ -1,0 +1,39 @@
+name: Deploy
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  deploy-api-docs:
+    name: Deploy API Documentation
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy-docs.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: true
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6.3.1
+
+      - name: Install Dependencies
+        run: uv sync --locked
+
+      - name: Build API Documentation
+        run: uv run pydoctor
+
+      - name: Upload API Documentation
+        uses: actions/upload-pages-artifact@v3.0.1
+        with:
+          path: apidocs
+
+      - name: Deploy API Documentation
+        id: deploy-docs
+        uses: actions/deploy-pages@v4.0.5
