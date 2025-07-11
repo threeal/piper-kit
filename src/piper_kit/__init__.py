@@ -4,10 +4,10 @@ This package provides Python bindings for controlling the AgileX PiPER robotic a
 via CAN bus interface using the python-can library.
 
 Example:
-    Basic usage of the PiperInterface:
+    Basic usage of the Piper:
 
-    >>> from piper_kit import PiperInterface
-    >>> with PiperInterface('can0') as piper:
+    >>> from piper_kit import Piper
+    >>> with Piper('can0') as piper:
     ...     piper.enable_all_joints()
     ...     piper.set_motion_control_b("joint", 20)
     ...     piper.set_joint_control(0, 0, 0, 0, 0, 0)
@@ -40,7 +40,7 @@ from .messages import (
 )
 
 
-class PiperInterface:
+class Piper:
     """Interface for controlling the AgileX PiPER robotic arm via CAN bus.
 
     This class provides methods for controlling joint positions, enabling/disabling
@@ -52,7 +52,7 @@ class PiperInterface:
     """
 
     def __init__(self, can_iface: str) -> None:
-        """Initialize PiperInterface with CAN interface."""
+        """Initialize Piper with CAN interface."""
         self.bus = can.Bus(channel=can_iface, interface="socketcan")
 
     def __enter__(self) -> Self:
@@ -391,4 +391,4 @@ class PiperInterface:
         return feedback
 
 
-__all__ = ["PiperInterface"]
+__all__ = ["Piper"]

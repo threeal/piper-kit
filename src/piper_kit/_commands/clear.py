@@ -1,10 +1,10 @@
 import argparse
 
-from piper_kit import PiperInterface
+from piper_kit import Piper
 
 
 def on_command(args: argparse.Namespace) -> None:
-    with PiperInterface(args.can_interface) as piper:
+    with Piper(args.can_interface) as piper:
         piper.set_all_joint_configs(clear_error=True)
 
 

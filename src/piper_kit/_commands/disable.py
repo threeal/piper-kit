@@ -1,13 +1,13 @@
 import argparse
 import time
 
-from piper_kit import PiperInterface
+from piper_kit import Piper
 
 JOINT_TOLERANCE = 1000
 
 
 def on_command(args: argparse.Namespace) -> None:
-    with PiperInterface(args.can_interface) as piper:
+    with Piper(args.can_interface) as piper:
         piper.set_motion_control_b("joint", 20)
         time.sleep(0.1)
 

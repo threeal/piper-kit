@@ -4,7 +4,7 @@ import sys
 import time
 from pathlib import Path
 
-from piper_kit import PiperInterface
+from piper_kit import Piper
 
 
 def interpolate(x0: float, y0: float, x1: float, y1: float, x: float) -> float:
@@ -14,7 +14,7 @@ def interpolate(x0: float, y0: float, x1: float, y1: float, x: float) -> float:
 def on_command(args: argparse.Namespace) -> None:
     sys.stdout.write("initializing...\n")
     with (
-        PiperInterface(args.can_interface) as piper,
+        Piper(args.can_interface) as piper,
         Path(args.csv_file).open() as csv_file,
     ):
         reader = csv.reader(csv_file)

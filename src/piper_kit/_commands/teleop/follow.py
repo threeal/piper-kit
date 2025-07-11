@@ -2,7 +2,7 @@ import argparse
 
 from cursers import Thread, ThreadedApp
 
-from piper_kit import PiperInterface
+from piper_kit import Piper
 from piper_kit.messages import (
     GripperFeedbackMessage,
     JointFeedback12Message,
@@ -53,7 +53,7 @@ class TeleopFollowApp(ThreadedApp):
 
 
 class FollowerThread(Thread):
-    def __init__(self, follower: PiperInterface, app: TeleopFollowApp) -> None:
+    def __init__(self, follower: Piper, app: TeleopFollowApp) -> None:
         super().__init__()
         self._follower = follower
         self._app = app
@@ -79,8 +79,8 @@ class FollowerThread(Thread):
 
 def on_command(args: argparse.Namespace) -> None:
     with (
-        PiperInterface(args.leader_can) as leader,
-        PiperInterface(args.follower_can) as follower,
+        Piper(args.leader_can) as leader,
+        Piper(args.follower_can) as follower,
         TeleopFollowApp() as app,
         FollowerThread(follower, app),
     ):
