@@ -2,7 +2,7 @@ import argparse
 
 from cursers import ThreadedApp
 
-from piper_kit import PiperInterface
+from piper_kit import Piper
 from piper_kit.messages import GripperFeedbackMessage
 
 
@@ -88,7 +88,7 @@ class TeleopEndPoseApp(ThreadedApp):
 
 
 def on_command(args: argparse.Namespace) -> None:
-    with PiperInterface(args.can_interface) as piper, TeleopEndPoseApp() as app:
+    with Piper(args.can_interface) as piper, TeleopEndPoseApp() as app:
         while app.is_running():
             match piper.read_message():
                 case GripperFeedbackMessage() as msg:

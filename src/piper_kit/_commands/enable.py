@@ -1,11 +1,11 @@
 import argparse
 import time
 
-from piper_kit import PiperInterface
+from piper_kit import Piper
 
 
 def on_command(args: argparse.Namespace) -> None:
-    with PiperInterface(args.can_interface) as piper:
+    with Piper(args.can_interface) as piper:
         piper.enable_all_joints()
 
         while True:

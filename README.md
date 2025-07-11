@@ -43,10 +43,10 @@ piper disable can1
 ### Python SDK
 
 ```python
-from piper_kit import PiperInterface
+from piper_kit import Piper
 
 # Use context manager for proper cleanup
-with PiperInterface("can0") as piper:
+with Piper("can0") as piper:
     # Enable all joints
     piper.enable_all_joints()
 
