@@ -24,6 +24,9 @@ jobs:
       - name: Check Lint
         run: uv run ruff check
 
+      - name: Test Package
+        run: uv run pytest --cov
+
       - name: Build API Documentation
         run: uv run pydoctor
 
