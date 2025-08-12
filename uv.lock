@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.13"
 
 [[package]]
@@ -353,17 +353,16 @@ wheels = [
 
 [[package]]
 name = "python-can"
-version = "4.5.0"
+version = "4.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "msgpack", marker = "sys_platform != 'win32'" },
     { name = "packaging" },
     { name = "typing-extensions" },
     { name = "wrapt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6a/4b/b6fd103c3f2eb0ae942e0704642d396ebbaf87f4d82d0102560cc738fdf1/python_can-4.5.0.tar.gz", hash = "sha256:d3684cebe5b028a148c1742b3a45cec4fcaf83a7f7c52d0680b2eaeaf52f8eb7", size = 1190119, upload-time = "2024-11-28T06:15:10.737Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a3/bf/6b530acce5486b447474bd933140af60056b9500278fb6254e0337917e61/python_can-4.6.0.tar.gz", hash = "sha256:e94f28e8b223c950d3ef1bcba39ac93ee6759356dadfd82671dc5e052beaa014", size = 1205943, upload-time = "2025-08-08T19:34:26.573Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6f/38/3faaa0460705f09f5fbae8e44ad4e12c6a90b12535797b9fba67f5271fed/python_can-4.5.0-py3-none-any.whl", hash = "sha256:1eec66833c1ac76a7e3d636ee0f8b4ba2752e892bab1c56ce74308b2216b5445", size = 268989, upload-time = "2024-11-28T06:15:08.813Z" },
+    { url = "https://files.pythonhosted.org/packages/08/b3/2844ad99e2b8333613973cb25e3ae14b641fe55e96474907e57a08715769/python_can-4.6.0-py3-none-any.whl", hash = "sha256:56febe1f9544c3209acd23fdcf2863061cf6135ec0e8133f96152e464d59e53c", size = 276955, upload-time = "2025-08-08T19:34:24.719Z" },
 ]
 
 [[package]]
