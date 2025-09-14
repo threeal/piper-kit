@@ -51,7 +51,7 @@ class Piper:
 
     """
 
-    def __init__(self, can_iface: str) -> None:
+    def __init__(self, can_iface: str, interface: str = "socketcan") -> None:
         """Initialize Piper with CAN interface."""
         self.bus = can.Bus(channel=can_iface, interface="socketcan")
 
